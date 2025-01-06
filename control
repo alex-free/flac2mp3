@@ -1,0 +1,6 @@
+Package: flac2mp3
+Version: 1.0
+Maintainer: Alex Free
+Architecture: all
+Homepage: https://github.com/alex-free/flac2mp3
+Description: Recursively convert a folder of FLAC files to one containing 320kbs stereo MP3 files.

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# FLAC2MP3 build script
+version="v1.0"
+program="flac2mp3"
+release_name="flac2mp3-$version"
+release_files="$program *.md"
+
+if ! command -v dpkg-deb &> /dev/null; then
+    echo "Dependencies for the build script must be installed, which requires root privileges."
+
+    if command -v dnf &> /dev/null; then
+        sudo dnf update -y
+        sudo dnf -y install zip dpkg
+    else
+        echo "Error: the dpkg-deb command is not installed on your system and the build script doesn't support installing it automatically."
+        exit 1
+    fi
+fi
+
+if ! command -v rpm &> /dev/null; then
+    echo "Dependencies for the build script must be installed, which requires root privileges."
+
+    if command -v apt &> /dev/null; then
+        sudo apt update --yes
+        sudo apt install --yes rpm zip
+    else
+        echo "Error: the apt command is not installed on your system and the build script doesn't support installing it automatically."
+    fi
+fi
+
+cd "$(dirname "$0")"
+
+version=v$version
+rm -rf "$release_name" "$release_name".zip "$release_name".deb *.rpm
+
+if [ "$1" == "clean" ]; then
+    exit 0
+fi
+
+mkdir -p "$release_name"/usr/bin
+mkdir -p "$release_name"/DEBIAN
+cp control "$release_name"/DEBIAN
+cp $program "$release_name"/usr/bin
+dpkg-deb --build "$release_name"
+
+rm -rf "$release_name"
+
+mkdir "$release_name"
+cp -r ${release_files} "$release_name"
+
+chmod -R 777 "$release_name"
+zip -r "$release_name".zip "$release_name"
+
+rm -rf rpm-tmp
+mkdir -p rpm-tmp/RPMS rpm-tmp/SPECS rpm-tmp/SOURCES rpm-tmp/BUILD
+cp rpm.spec rpm-tmp/SPECS
+cp $program rpm-tmp/SOURCES
+rpmbuild -bb --target noarch rpm-tmp/SPECS/rpm.spec --define "_topdir $PWD/rpm-tmp"
+mv rpm-tmp/RPMS/noarch/*.rpm .
+rm -rf rpm-tmp
