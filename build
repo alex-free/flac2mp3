@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # FLAC2MP3 build script
-version="v1.0"
+version="v1.0.1"
 program="flac2mp3"
 release_name="flac2mp3-$version"
 release_files="$program *.md"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=1.0
+version=1.0.1
 
 echo -e "FLAC2MP3 v$version\n(c) 2025, Alex Free (3-BSD)\n"
 
@@ -10,8 +10,8 @@ if ! command -v ffmpeg &> /dev/null; then
     fi
 
     if command -v dnf &> /dev/null; then
-        sudo dnf update -y
-        sudo dnf -y install ffmpeg
+	 sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+	 sudo dnf -y swap ffmpeg-free ffmpeg --allowerasing
     elif command -v apt &> /dev/null; then
         sudo apt update --yes
         sudo apt install --yes ffmpeg
